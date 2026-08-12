@@ -19,16 +19,16 @@ import {
   RESIDENT_CATEGORIES,
   PAYMENT_METHODS,
 } from '@/lib/db/schema'
-import { ADMIN_SECRET } from '@/lib/config'
+import { adminSecret } from '@/lib/secrets'
 
 const ADMIN_COOKIE = 'admin_access'
 
 function sessionToken() {
-  return createHash('sha256').update(ADMIN_SECRET).digest('hex')
+  return createHash('sha256').update(adminSecret()).digest('hex')
 }
 
 export async function unlockAdmin(password: string) {
-  if (password !== ADMIN_SECRET) {
+  if (password !== adminSecret()) {
     return { ok: false as const, error: 'Incorrect password.' }
   }
 

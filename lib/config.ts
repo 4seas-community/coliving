@@ -1,13 +1,9 @@
-// Gating secrets. Override ADMIN_SECRET via env in production.
-export const ADMIN_SECRET = process.env.ADMIN_SECRET ?? 'bofbak-sabpuG-supwu'
-
-// Password for the hidden resident onboarding guide. Deliberately easy to
-// say out loud — everyone staying in the house is meant to get in.
-export const INTERNAL_PASSWORD = process.env.INTERNAL_PASSWORD ?? 'ZuChiangMai'
-
-// /coliving/checkin used to sit behind this same password. It is now open
-// to anyone with the link (noindex, so still unlisted) — guests arriving
-// with luggage should not have to hunt for a password.
+// Gating secrets are NOT here — this file is imported by client
+// components, and the repo is public. See lib/secrets.ts.
+//
+// /coliving/checkin used to sit behind a password too. It is now open to
+// anyone with the link (noindex, so still unlisted) — guests arriving with
+// luggage should not have to hunt for a password.
 
 export const APPLICATION_STATUSES = [
   'Pending',

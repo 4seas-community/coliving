@@ -62,6 +62,20 @@ That also means **any admin action that edits a room has to call
 `revalidatePath` for both of those routes**, or they keep serving the
 build-time snapshot until the next deploy.
 
+## Secrets
+
+This repo is **public** (`tea.4seas.xyz/4Seas/coliving`), so `ADMIN_SECRET`
+and `INTERNAL_PASSWORD` have no in-source defaults. `lib/secrets.ts` reads
+them from the environment per request and throws if either is missing —
+lazily, so `next build` does not need them, only the running service. Both
+live in `/opt/4seas-coliving/env`.
+
+Rotating `INTERNAL_PASSWORD` or `ADMIN_SECRET` invalidates the matching
+cookies (both are hashes of the secret), so everyone signs in again.
+
+`/coliving/checkin` has no gate at all — it is reachable by anyone with
+the link, and kept out of search results with `robots: noindex` only.
+
 ## Images
 
 `next/image` optimisation is on, so `/_next/image?url=…&w=…` resizes and
