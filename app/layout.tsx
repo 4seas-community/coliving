@@ -26,20 +26,13 @@ export const metadata: Metadata = {
   description:
     'An all-inclusive co-living base in Chiang Mai for founders, engineers, and creators. Rooms, community, and the full operating system for deep work.',
   generator: 'v0.app',
+  // The 4Seas clover, cropped out of public/4seas-logo.png. It reads the
+  // same on light and dark tab chrome, so unlike the v0 mark it replaced
+  // there is no need for per-scheme variants — both filenames are kept
+  // only because nginx already routes them.
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/icon-light-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
     apple: '/apple-icon.png',
   },
