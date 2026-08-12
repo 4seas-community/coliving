@@ -222,7 +222,13 @@ export async function updateRoom(
   await assertSecret(secret)
   await db.update(rooms).set(data).where(eq(rooms.slug, slug))
   revalidatePath('/coliving/admin')
+  // Every public page that calls getEnabledRooms() has to be listed here.
+  // /coliving/rooms and /coliving/apply are statically prerendered, so
+  // without their own revalidate they keep serving the build-time room
+  // snapshot until the next deploy.
   revalidatePath('/coliving')
+  revalidatePath('/coliving/rooms')
+  revalidatePath('/coliving/apply')
 }
 
 export type ResidentInput = {
