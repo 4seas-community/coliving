@@ -163,6 +163,13 @@ Two nginx details that are easy to get wrong:
 - Every prefix needs `^~`. `4seas-site` has a static-asset regex location
   that otherwise steals `*.css|js|png` and resolves them against the
   homepage root.
+- Every one of those prefixes needs an exact-match twin, or the bare form
+  redirects forever. `/checkin` matches no `^~` prefix (they all end in
+  `/`), falls through to the static site's `try_files $uri $uri/`, and
+  comes back 301 with the slash added — which the prefix then hands to
+  Next, which 308s the slash back off. `/checkin` and `/rooms` are now
+  `return 301` to their `/coliving/…` pages, so they double as short
+  links; `/_next` is a plain 404. Add the same for any new prefix.
 - Do **not** add `location = /coliving { return 301 /coliving/; }`. Next
   canonicalises the other way, so that redirect plus Next's 308 back is an
   infinite loop. The static-site template preplaced in 2026-08 had exactly
