@@ -1,4 +1,3 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Geist_Mono, Inter, Manrope } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
@@ -64,7 +63,6 @@ export default function RootLayout({
       <body className="font-sans antialiased" suppressHydrationWarning>
         {children}
         <Toaster theme="light" position="top-center" />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )

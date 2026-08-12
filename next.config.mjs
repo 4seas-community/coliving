@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Self-hosted on 4seas.xyz behind nginx as a systemd service, so the
+  // build has to emit a runnable server.js rather than assume Vercel.
+  output: 'standalone',
+  // Without this Next walks up past 4seas-dev to ~/package.json (a stray
+  // yarn workspace) and infers the wrong root, which buries server.js
+  // several directories deep inside .next/standalone.
+  outputFileTracingRoot: import.meta.dirname,
   typescript: {
     ignoreBuildErrors: true,
   },

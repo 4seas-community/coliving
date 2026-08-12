@@ -6,7 +6,9 @@ import { CHECKIN_PASSWORD } from '@/lib/config'
 const COOKIE = 'checkin_access'
 
 export async function unlockCheckin(password: string) {
-  if (password !== CHECKIN_PASSWORD) {
+  // Shared house password — forgive stray whitespace and phone
+  // auto-capitalisation rather than bounce a guest who typed it right.
+  if (password.trim().toLowerCase() !== CHECKIN_PASSWORD.toLowerCase()) {
     return { ok: false as const, error: 'Incorrect password.' }
   }
   const store = await cookies()

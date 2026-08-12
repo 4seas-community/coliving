@@ -1,8 +1,9 @@
 'use server'
 
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { cookies } from 'next/headers'
-import { put } from '@vercel/blob'
 import { desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db'
@@ -362,11 +363,15 @@ export async function updateSiteSetting(secret: string, key: string, value: unkn
   return { ok: true as const }
 }
 
-// Uploads an image file to Vercel Blob public storage for use in editable
-// site content (Check-in Guide photos, Coliving landing images). Returns
-// the public blob URL, which the client stores directly as the field's
-// value — no separate "confirm" step needed since the old file is simply
-// left orphaned in Blob storage (images are small and infrequent).
+// Uploads an image file for use in editable site content (Check-in Guide
+// photos, Coliving landing images). Returns the public URL, which the
+// client stores directly as the field's value — no separate "confirm"
+// step needed since the old file is simply left orphaned on disk (images
+// are small and infrequent).
+//
+// Files land in UPLOAD_DIR, which must live OUTSIDE the release tree
+// (/var/lib/4seas-coliving/uploads in production) so uploads survive a
+// deploy, and is served by nginx at /coliving/uploads/.
 export async function uploadSiteImage(secret: string, formData: FormData) {
   await assertSecret(secret)
   const file = formData.get('file')
@@ -379,9 +384,23 @@ export async function uploadSiteImage(secret: string, formData: FormData) {
   if (file.size > 8 * 1024 * 1024) {
     return { ok: false as const, error: 'Image must be under 8MB.' }
   }
-  const blob = await put(`site/${file.name}`, file, {
-    access: 'public',
-    addRandomSuffix: true,
-  })
-  return { ok: true as const, url: blob.url }
+
+  // Never trust the client's filename for a path: strip directories and
+  // anything outside a safe charset, then add a random suffix so two
+  // uploads of "photo.jpg" don't clobber each other.
+  const ext = (file.name.match(/\.[a-zA-Z0-9]{1,8}$/)?.[0] ?? '').toLowerCase()
+  const stem = file.name
+    .slice(0, file.name.length - ext.length)
+    .replace(/[^a-zA-Z0-9._-]/g, '-')
+    .replace(/^[.-]+/, '')
+    .slice(0, 60)
+  const name = `${stem || 'image'}-${randomUUID().slice(0, 8)}${ext}`
+
+  const dir = process.env.UPLOAD_DIR ?? './uploads'
+  await mkdir(dir, { recursive: true })
+  await writeFile(
+    join(dir, name),
+    Buffer.from(await file.arrayBuffer()),
+  )
+  return { ok: true as const, url: `/coliving/uploads/${name}` }
 }

@@ -1,11 +1,13 @@
 // Gating secrets. Override ADMIN_SECRET via env in production.
 export const ADMIN_SECRET = process.env.ADMIN_SECRET ?? 'bofbak-sabpuG-supwu'
 
-// Password for the hidden resident onboarding guide.
-export const INTERNAL_PASSWORD = process.env.INTERNAL_PASSWORD ?? 'bofbak-sabpuG-supwu'
+// Password for the hidden resident onboarding guide. Deliberately easy to
+// say out loud — everyone staying in the house is meant to get in.
+export const INTERNAL_PASSWORD = process.env.INTERNAL_PASSWORD ?? 'ZuChiangMai'
 
-// Password for the hidden guest check-in info page.
-export const CHECKIN_PASSWORD = process.env.CHECKIN_PASSWORD ?? 'bofbak-sabpuG-supwu'
+// Password for the hidden guest check-in info page. Same house password as
+// the onboarding guide.
+export const CHECKIN_PASSWORD = process.env.CHECKIN_PASSWORD ?? 'ZuChiangMai'
 
 export const APPLICATION_STATUSES = [
   'Pending',

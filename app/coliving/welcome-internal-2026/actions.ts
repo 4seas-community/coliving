@@ -6,7 +6,9 @@ import { INTERNAL_PASSWORD } from '@/lib/config'
 const COOKIE = 'internal_access'
 
 export async function unlockInternal(password: string) {
-  if (password !== INTERNAL_PASSWORD) {
+  // Shared house password — forgive stray whitespace and phone
+  // auto-capitalisation rather than bounce a resident who typed it right.
+  if (password.trim().toLowerCase() !== INTERNAL_PASSWORD.toLowerCase()) {
     return { ok: false as const, error: 'Incorrect password.' }
   }
   const store = await cookies()
