@@ -50,6 +50,15 @@ scp /tmp/coliving-release.tgz 4seas:/tmp/
 # server
 REL=/opt/4seas-coliving/releases/$(date +%Y%m%d%H%M%S)-$(git rev-parse --short HEAD)
 mkdir -p "$REL" && tar -xzf /tmp/coliving-release.tgz -C "$REL"
+
+# Point both sharp entry points at the natively-installed copy (see Images).
+V=/opt/4seas-coliving/vendor/node_modules/sharp
+rm -rf "$REL/node_modules/sharp" && ln -s "$V" "$REL/node_modules/sharp"
+for l in "$REL"/.next/node_modules/sharp-*; do
+  case "$(basename "$l")" in ._*) continue;; esac
+  rm -rf "$l" && ln -s "$V" "$l"
+done
+
 chown -R coliving:coliving "$REL"
 ln -sfn "$REL" /opt/4seas-coliving/current.new
 mv -T /opt/4seas-coliving/current.new /opt/4seas-coliving/current
@@ -81,14 +90,30 @@ the link, and kept out of search results with `robots: noindex` only.
 `next/image` optimisation is on, so `/_next/image?url=…&w=…` resizes and
 re-encodes to AVIF/WebP on first request and caches the result under
 `.next/cache/images` in the live release. That needs **sharp with its
-linux/x64 codecs**, and the build machine is a Mac — hence the
-`pnpm.supportedArchitectures` block in `package.json`. Without it the
-tarball carries only the darwin binary and every image 500s in
-production. After a build, confirm the codecs shipped:
+linux/x64 codecs**, and the build machine is a Mac.
+
+Cross-installing them from macOS does not work. `pnpm.supportedArchitectures`
+does pull the linux packages into the bundle, but the `@img/sharp-libvips-linux-x64`
+copy pnpm fetches on a Mac arrives with an empty `lib/`, so the `.node`
+binary loads and then dies on `libvips-cpp.so.8.18.3: cannot open shared
+object file`. Symptom: every page that touches sharp 500s — including
+`/coliving/admin`, which imports it for upload processing.
+
+What works is a **native sharp vendored on the server**, installed once
+outside the release tree:
 
 ```bash
-ls -d .next/standalone/node_modules/.pnpm/@img+sharp-linux-x64*
+mkdir -p /opt/4seas-coliving/vendor && cd /opt/4seas-coliving/vendor
+npm init -y && npm install --include=optional sharp@0.35.3
+chown -R coliving:coliving /opt/4seas-coliving/vendor
+node -e 'console.log(require("/opt/4seas-coliving/vendor/node_modules/sharp").versions.vips)'
 ```
+
+Then every release has to be pointed at it. Note it is **not** enough to
+replace `node_modules/sharp`: Next externalises sharp under a hashed name
+and loads it through `.next/node_modules/sharp-<hash>`, which symlinks
+straight into the bundled pnpm tree. Both have to move (this is in the
+release recipe above).
 
 Admin uploads are normalised on the way in (`uploadSiteImage`): EXIF
 rotation applied, capped at 2000px, re-encoded to WebP. Uploaded files
