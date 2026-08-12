@@ -34,12 +34,16 @@ Built on a Mac, shipped as a tarball. Two things bite if you improvise:
    `Cannot find module '@swc/helpers/_/_interop_require_default'`. The
    `.pnpm` tree inside `.next/standalone` is self-contained and all its
    links are relative, so plain `tar -cz` is correct.
+3. **Copy both `.next/static` and `public` in yourself.** Next does not
+   reliably place either inside `.next/standalone`; a missing `public`
+   shows up as every photo 404ing while the pages themselves render.
 
 ```bash
 # local
 npm_config_package_manager_strict=false pnpm install
 DATABASE_URL='<session pooler url>' pnpm exec next build   # build reads the DB
-cp -R .next/static .next/standalone/.next/static           # not copied automatically
+cp -R .next/static .next/standalone/.next/static
+cp -R public .next/standalone/public
 tar -czf /tmp/coliving-release.tgz -C .next/standalone .
 scp /tmp/coliving-release.tgz 4seas:/tmp/
 
@@ -57,6 +61,25 @@ The build talks to the database because `/coliving/apply` and
 That also means **any admin action that edits a room has to call
 `revalidatePath` for both of those routes**, or they keep serving the
 build-time snapshot until the next deploy.
+
+## Images
+
+`next/image` optimisation is on, so `/_next/image?url=…&w=…` resizes and
+re-encodes to AVIF/WebP on first request and caches the result under
+`.next/cache/images` in the live release. That needs **sharp with its
+linux/x64 codecs**, and the build machine is a Mac — hence the
+`pnpm.supportedArchitectures` block in `package.json`. Without it the
+tarball carries only the darwin binary and every image 500s in
+production. After a build, confirm the codecs shipped:
+
+```bash
+ls -d .next/standalone/node_modules/.pnpm/@img+sharp-linux-x64*
+```
+
+Admin uploads are normalised on the way in (`uploadSiteImage`): EXIF
+rotation applied, capped at 2000px, re-encoded to WebP. Uploaded files
+keep their own URL under `/coliving/uploads/` and are served straight off
+disk by nginx rather than through the optimiser.
 
 ## Database
 

@@ -4,6 +4,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { cookies } from 'next/headers'
+import sharp from 'sharp'
 import { desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db'
@@ -34,7 +35,11 @@ export async function unlockAdmin(password: string) {
   const store = await cookies()
   store.set(ADMIN_COOKIE, sessionToken(), {
     httpOnly: true,
-    sameSite: 'none',
+    // 'none' is for cookies sent on cross-site requests; it makes the
+    // cookie depend on third-party cookie permission, which Safari's ITP
+    // and most blockers deny — the gate then silently never unlocks.
+    // This is a same-site form post, so 'lax' is both correct and safe.
+    sameSite: 'lax',
     secure: true,
     path: '/coliving/admin',
     maxAge: 60 * 60 * 24 * 7,
@@ -393,20 +398,34 @@ export async function uploadSiteImage(secret: string, formData: FormData) {
 
   // Never trust the client's filename for a path: strip directories and
   // anything outside a safe charset, then add a random suffix so two
-  // uploads of "photo.jpg" don't clobber each other.
-  const ext = (file.name.match(/\.[a-zA-Z0-9]{1,8}$/)?.[0] ?? '').toLowerCase()
+  // uploads of "photo.jpg" don't clobber each other. The extension is
+  // dropped rather than kept — everything is re-encoded to WebP below, so
+  // the original container is irrelevant.
+  const ext = file.name.match(/\.[a-zA-Z0-9]{1,8}$/)?.[0] ?? ''
   const stem = file.name
     .slice(0, file.name.length - ext.length)
     .replace(/[^a-zA-Z0-9._-]/g, '-')
     .replace(/^[.-]+/, '')
     .slice(0, 60)
-  const name = `${stem || 'image'}-${randomUUID().slice(0, 8)}${ext}`
+  const name = `${stem || 'image'}-${randomUUID().slice(0, 8)}.webp`
+
+  // A phone photo straight off the camera is 3-5MB and 4000px wide, for a
+  // slot that renders a few hundred pixels. Normalise on the way in so the
+  // stored file is already web-sized; next/image still derives a srcset
+  // from it, but even the largest variant starts from something sane.
+  let out: Buffer
+  try {
+    out = await sharp(Buffer.from(await file.arrayBuffer()))
+      .rotate() // honour EXIF orientation before the metadata is stripped
+      .resize({ width: 2000, withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toBuffer()
+  } catch {
+    return { ok: false as const, error: 'Could not read that image file.' }
+  }
 
   const dir = process.env.UPLOAD_DIR ?? './uploads'
   await mkdir(dir, { recursive: true })
-  await writeFile(
-    join(dir, name),
-    Buffer.from(await file.arrayBuffer()),
-  )
+  await writeFile(join(dir, name), out)
   return { ok: true as const, url: `/coliving/uploads/${name}` }
 }

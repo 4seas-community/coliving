@@ -14,7 +14,11 @@ export async function unlockCheckin(password: string) {
   const store = await cookies()
   store.set(COOKIE, CHECKIN_PASSWORD, {
     httpOnly: true,
-    sameSite: 'none',
+    // 'none' is for cookies sent on cross-site requests; it makes the
+    // cookie depend on third-party cookie permission, which Safari's ITP
+    // and most blockers deny — the gate then silently never unlocks.
+    // This is a same-site form post, so 'lax' is both correct and safe.
+    sameSite: 'lax',
     secure: true,
     path: '/coliving/checkin',
     maxAge: 60 * 60 * 24 * 7,

@@ -10,8 +10,20 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Every image on the site already renders through next/image, but v0
+  // shipped `unoptimized: true`, which turns it into a plain <img> and
+  // serves whatever was committed — camera originals, several MB each,
+  // into layout slots a few hundred pixels wide. With optimisation on,
+  // Next emits a srcset, negotiates AVIF/WebP, and lazy-loads anything
+  // below the fold, so a 330px slot fetches a 330px file.
   images: {
-    unoptimized: true,
+    formats: ['image/avif', 'image/webp'],
+    // Widths the layout actually asks for via `sizes`, so Next does not
+    // generate variants nobody requests.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [64, 96, 128, 256, 384],
+    // Optimised results are content-addressed, so they can be cached hard.
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   experimental: {
     // Server Actions default to a 1mb request body limit. The admin
