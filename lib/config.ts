@@ -5,9 +5,9 @@ export const ADMIN_SECRET = process.env.ADMIN_SECRET ?? 'bofbak-sabpuG-supwu'
 // say out loud — everyone staying in the house is meant to get in.
 export const INTERNAL_PASSWORD = process.env.INTERNAL_PASSWORD ?? 'ZuChiangMai'
 
-// Password for the hidden guest check-in info page. Same house password as
-// the onboarding guide.
-export const CHECKIN_PASSWORD = process.env.CHECKIN_PASSWORD ?? 'ZuChiangMai'
+// /coliving/checkin used to sit behind this same password. It is now open
+// to anyone with the link (noindex, so still unlisted) — guests arriving
+// with luggage should not have to hunt for a password.
 
 export const APPLICATION_STATUSES = [
   'Pending',
