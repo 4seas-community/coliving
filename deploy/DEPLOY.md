@@ -1,5 +1,28 @@
 # Deploying 4Seas Coliving
 
+GitHub [`4seas-community/coliving`](https://github.com/4seas-community/coliving)
+is the only source of truth. Gitea `4Seas/coliving` is a downstream operational
+copy synchronized from a local checkout with `scripts/sync-gitea.sh`. Never
+develop on or force-push Gitea. Neither GitHub nor Gitea changes production
+automatically.
+
+Before preparing a release, require a clean GitHub `main` and synchronize the
+same commit to Gitea:
+
+```bash
+git switch main
+git pull --ff-only origin main
+./scripts/sync-gitea.sh --check
+./scripts/sync-gitea.sh --apply
+```
+
+Production is a separate locally controlled operation. Inspect the live state,
+record the active release, build and checksum a new immutable release, show an
+execution card, and obtain explicit human approval immediately before upload or
+switching. If post-switch service, log, or public checks fail, atomically switch
+back to the recorded release and restart the service. Never edit `current` or an
+active release in place, and never include persistent `uploads/` in a release.
+
 Live at `https://4seas.xyz/coliving`, served by `4seas-app@coliving.service`
 on `127.0.0.1:3006` behind nginx on the production box (ssh alias `4seas`,
 149.28.158.244).
@@ -73,7 +96,7 @@ build-time snapshot until the next deploy.
 
 ## Secrets
 
-This repo is **public** (`tea.4seas.xyz/4Seas/coliving`), so `ADMIN_SECRET`
+This repo is **public** (`github.com/4seas-community/coliving`), so `ADMIN_SECRET`
 and `INTERNAL_PASSWORD` have no in-source defaults. `lib/secrets.ts` reads
 them from the environment per request and throws if either is missing —
 lazily, so `next build` does not need them, only the running service. Both
