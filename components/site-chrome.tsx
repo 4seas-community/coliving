@@ -1,13 +1,13 @@
 'use client'
 
 import { useId, useRef, useState } from 'react'
-import { Open_Sans } from 'next/font/google'
+import localFont from 'next/font/local'
 import styles from './site-chrome.module.css'
 
 // Homepage source: 4seas-community/homepage @ 0ea0223.
 // Keep this component and its assets in sync across the four public modules.
 const ASSET_BASE = '/site-chrome'
-const footerFont = Open_Sans({ subsets: ['latin'], weight: ['400', '600'], display: 'swap', variable: '--font-site-footer' })
+const footerFont = localFont({ src: './fonts/open-sans-latin.woff2', weight: '300 800', display: 'swap', variable: '--font-site-footer' })
 const HOME = 'https://4seas.xyz'
 const navigation = [
   ['Events', `${HOME}/#events`],

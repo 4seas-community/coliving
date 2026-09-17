@@ -49,7 +49,7 @@ const languages = [['zh', '中文'], ['en', 'English'], ['th', 'ไทย']] as 
 const destinations = ['https://4seas.xyz/event', 'https://4seas.xyz/coliving', 'https://4seas.xyz/residency', 'https://booking.4seas.xyz']
 
 export function SiteNotFound() {
-  const pathname = usePathname()
+  const pathname = usePathname() || ''
   const initial = /(?:^|\/)(?:zh|zh-CN)(?:\/|$)/.test(pathname) ? 'zh' : /(?:^|\/)th(?:\/|$)/.test(pathname) ? 'th' : 'en'
   const [language, setLanguage] = useState<'zh' | 'en' | 'th'>(initial)
   const t = copy[language]
