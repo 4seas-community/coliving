@@ -1,5 +1,7 @@
 'use server'
 
+import { SiteHeader } from '@/components/site-header'
+import { SiteFooter } from '@/components/site-footer'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
@@ -17,9 +19,11 @@ export default async function RoomsGalleryPage() {
   const totalPhotos = sections.reduce((n, s) => n + s.images.length, 0)
 
   return (
-    <main className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
+      <SiteHeader />
+      <main className="flex-1">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
+      <div className="border-b border-border bg-background">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-4 sm:px-6">
           <Link
             href="/coliving"
@@ -33,7 +37,7 @@ export default async function RoomsGalleryPage() {
           <h1 className="text-sm font-semibold">Rooms</h1>
           <span className="ml-auto text-xs text-muted-foreground">{totalPhotos} photos</span>
         </div>
-      </header>
+      </div>
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         {sections.map(({ room, images }) => (
@@ -89,6 +93,8 @@ export default async function RoomsGalleryPage() {
           </Link>
         </div>
       </div>
-    </main>
+      </main>
+      <SiteFooter />
+    </div>
   )
 }
