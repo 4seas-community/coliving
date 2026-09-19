@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { languageFromPathname } from '@/lib/site-not-found-language'
 import './site-not-found.css'
 
 const copy = {
@@ -50,7 +51,7 @@ const destinations = ['https://4seas.xyz/event', 'https://4seas.xyz/coliving', '
 
 export function SiteNotFound() {
   const pathname = usePathname() || ''
-  const initial = /(?:^|\/)(?:zh|zh-CN)(?:\/|$)/.test(pathname) ? 'zh' : /(?:^|\/)th(?:\/|$)/.test(pathname) ? 'th' : 'en'
+  const initial = languageFromPathname(pathname)
   const [language, setLanguage] = useState<'zh' | 'en' | 'th'>(initial)
   const t = copy[language]
   return <main className="siteNotFound" lang={language === 'zh' ? 'zh-CN' : language}>
