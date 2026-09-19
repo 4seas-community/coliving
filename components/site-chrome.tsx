@@ -6,7 +6,7 @@ import styles from './site-chrome.module.css'
 
 // Homepage source: 4seas-community/homepage @ 0ea0223.
 // Keep this component and its assets in sync across the four public modules.
-const ASSET_BASE = '/site-chrome'
+const ASSET_BASE = '/coliving/site-chrome'
 const footerFont = localFont({ src: './fonts/open-sans-latin.woff2', weight: '300 800', display: 'swap', variable: '--font-site-footer' })
 const HOME = 'https://4seas.xyz'
 const navigation = [
