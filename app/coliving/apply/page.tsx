@@ -4,6 +4,8 @@ import { SiteFooter } from '@/components/site-footer'
 import { ApplyForm } from '@/components/coliving/apply-form'
 import { getEnabledRooms } from '@/lib/queries'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Apply // 4SEAS Chiang Mai Base',
   description: 'A 6-question soul form. Fillable in under 2 minutes.',
