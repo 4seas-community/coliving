@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { RoomGallery } from '@/components/coliving/room-gallery'
-import { PricingGrid } from '@/components/coliving/pricing-grid'
 import type { Room } from '@/lib/db/schema'
 import { parseRoomImages } from '@/lib/room-images'
 
@@ -51,13 +50,6 @@ export function UnifiedRoomCard({ rooms }: { rooms: Room[] }) {
             {rooms.map((r) => r.title).join(' · ')}
           </p>
         </div>
-
-        {/* Pricing grid */}
-        <dl className="w-full shrink-0 sm:w-64">
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border text-sm">
-            <PricingGrid itemClassName="px-3 py-2" />
-          </div>
-        </dl>
       </div>
     </div>
   )

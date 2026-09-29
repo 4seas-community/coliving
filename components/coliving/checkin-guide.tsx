@@ -153,7 +153,6 @@ export function CheckinGuide({ content }: { content: CheckinGuideContent }) {
             <InfoRow label="Check-in" value={content.checkIn} />
             <InfoRow label="Check-out" value={content.checkOut} />
             <InfoRow label="Early check-in" value={content.earlyCheckIn} />
-            <InfoRow label="Late check-out" value={content.lateCheckOut} />
           </div>
         </section>
 
