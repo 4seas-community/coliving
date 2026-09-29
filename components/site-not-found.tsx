@@ -14,7 +14,6 @@ const copy = {
     "explore": "Explore 4Seas",
     "routes": [
       "Community events",
-      "Coliving",
       "Residency programs",
       "Room booking"
     ]
@@ -27,7 +26,6 @@ const copy = {
     "explore": "继续探索 4Seas",
     "routes": [
       "社区活动",
-      "共享居住",
       "驻留计划",
       "会议室预订"
     ]
@@ -40,14 +38,13 @@ const copy = {
     "explore": "สำรวจ 4Seas",
     "routes": [
       "กิจกรรมชุมชน",
-      "โคลิฟวิ่ง",
       "โปรแกรมพำนัก",
       "จองห้องประชุม"
     ]
   }
 } as const
 const languages = [['zh', '中文'], ['en', 'English'], ['th', 'ไทย']] as const
-const destinations = ['https://4seas.xyz/event', 'https://4seas.xyz/coliving', 'https://4seas.xyz/residency', 'https://booking.4seas.xyz']
+const destinations = ['https://4seas.xyz/event', 'https://4seas.xyz/residency', 'https://booking.4seas.xyz']
 
 export function SiteNotFound() {
   const pathname = usePathname() || ''

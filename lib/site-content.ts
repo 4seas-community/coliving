@@ -70,7 +70,7 @@ export const DEFAULT_CHECKIN_GUIDE: CheckinGuideContent = {
   checkIn: '2:00 PM',
   checkOut: 'Before 12:00 PM (noon)',
   earlyCheckIn: 'Subject to availability',
-  lateCheckOut: 'Additional fee, upon request',
+  lateCheckOut: 'Upon request',
 
   addressName: '4Seas Nimman',
   addressLines:

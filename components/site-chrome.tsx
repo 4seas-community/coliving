@@ -14,7 +14,6 @@ const navigation = [
   ['Zuzalu', `${HOME}/#Zuzalu`],
   ['About', `${HOME}/#about`],
   ['Space', `${HOME}/#Space`],
-  ['Coliving', `${HOME}/coliving`],
   ['Residency', `${HOME}/residency`],
 ] as const
 

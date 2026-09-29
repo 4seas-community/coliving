@@ -140,7 +140,7 @@ export default async function ColivingPage() {
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
             <div className="mb-8">
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                <span className="text-neon">{'// '}</span>One Price covers all
+                <span className="text-neon">{'// '}</span>What's included
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Everything bundled in — utilities, internet, and all the perks below. No surprises.
@@ -164,15 +164,15 @@ export default async function ColivingPage() {
           </div>
         </section>
 
-        {/* Spaces & Pricing */}
+        {/* Spaces */}
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
             <div className="mb-10">
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                <span className="text-neon">{'// '}</span>Spaces & Pricing
+                <span className="text-neon">{'// '}</span>Spaces
               </h2>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                One flat price — no room type tiers, no peak season markup. All-inclusive.
+                Private, fully furnished rooms alongside shared community spaces.
               </p>
             </div>
             <UnifiedRoomCard rooms={rooms} />

@@ -1,5 +1,4 @@
 import { RoomGallery } from '@/components/coliving/room-gallery'
-import { PricingGrid } from '@/components/coliving/pricing-grid'
 import type { Room } from '@/lib/db/schema'
 import { parseRoomImages } from '@/lib/room-images'
 import { cn } from '@/lib/utils'
@@ -40,10 +39,6 @@ export function RoomCard({ room }: { room: Room }) {
             {room.description}
           </p>
         </div>
-
-        <dl className="mt-auto grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border text-sm">
-          <PricingGrid itemClassName="p-3" />
-        </dl>
       </div>
     </div>
   )

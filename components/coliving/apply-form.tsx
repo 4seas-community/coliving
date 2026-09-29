@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Loader2, CalendarIcon, CheckCircle2, MessageCircle, Send, Check } from 'lucide-react'
 import { format } from 'date-fns'
 import { submitApplication } from '@/app/coliving/actions'
-import { estimateStayCost } from '@/lib/pricing'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -34,21 +33,6 @@ const DURATION_LABELS: Record<(typeof STAY_DURATIONS)[number], string> = {
   '1 week': '1 Week',
   '2 weeks': '2 Weeks',
   '1 month': '1 Month',
-}
-
-function PricePreview({ occupancy, duration }: { occupancy: string; duration: string }) {
-  const { amount, suffix } = estimateStayCost(occupancy, duration)
-  return (
-    <div className="flex items-center justify-between rounded-xl border border-neon/30 bg-neon/5 px-4 py-3.5">
-      <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-        Estimated cost
-      </span>
-      <span className="text-lg font-bold text-neon">
-        ${amount.toLocaleString()}{' '}
-        <span className="text-xs font-medium text-muted-foreground">{suffix}</span>
-      </span>
-    </div>
-  )
 }
 
 const COMMONS = [
@@ -298,24 +282,6 @@ export function ApplyForm({ roomOptions }: { roomOptions: RoomOption[] }) {
           </p>
         </div>
 
-        {/* Price preview for their selected stay */}
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-            Your estimated cost
-          </h3>
-          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            Based on {form.occupancy} for {DURATION_LABELS[form.stayDuration as (typeof STAY_DURATIONS)[number]]}. We&apos;ll confirm your exact room and price when we get back to you.
-          </p>
-          <div className="mt-4">
-            <PricePreview occupancy={form.occupancy} duration={form.stayDuration} />
-          </div>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            We accept <span className="font-medium text-foreground">crypto</span>,{' '}
-            <span className="font-medium text-foreground">cash</span>, and{' '}
-            <span className="font-medium text-foreground">Thai PromptPay</span>. We&apos;ll follow up with payment details once your application is confirmed.
-          </p>
-        </div>
-
         {/* Community links */}
         <div className="rounded-2xl border border-border bg-card p-6">
           <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
@@ -520,8 +486,6 @@ export function ApplyForm({ roomOptions }: { roomOptions: RoomOption[] }) {
             </div>
           </div>
         </div>
-
-        <PricePreview occupancy={form.occupancy} duration={form.stayDuration} />
 
         {/* Special requests */}
         <div className="space-y-2">
